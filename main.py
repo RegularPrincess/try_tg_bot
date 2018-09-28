@@ -114,6 +114,7 @@ def handle_text(message):
             else:
                 msg = "Для удаления вопроса отправьте его номер."
                 bot.send_message(uid, msg)
+                return
         if INADMINMENU[uid] == "Добавить вопрос":
             try:
                 t = message.text
@@ -128,7 +129,8 @@ def handle_text(message):
                 bot.send_message(uid, "Пожалуйста следуйте требованиям при написании вопроса "
                                       "(строгие требования относятся лишь к существующему "
                                       "прототипу и в дальнейшем ввод вопросов будет упрощен)")
-        return
+                return
+
 
     if message.text.lower() == "да":
         if len(Questions) > 0:
