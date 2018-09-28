@@ -62,12 +62,15 @@ def handle_text(message):
 
     if message.text == "Существующие вопросы" and uid in ADMINS:
         msg = "Текущие вопросы в боте: \n\n"
+        print(Q)
         for i, q in Q:
+            print(q)
             msg += "(№ {}) ".format(i)
             msg += '{} \n Ответы: {}\n\n'.format(q.text, ", ".join(q.answers))
         msg += "Для удаления вопроса отправьте его номер."
         INADMINMENU[uid] = "Существующие вопросы"
         markup = u.get_keyboard(["Отмена"])
+        print(msg)
         bot.send_message(uid, msg, reply_markup=markup)
         return
 
