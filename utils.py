@@ -25,6 +25,14 @@ def del_uid_from_dict(uid, dict_):
         del dict_[uid]
 
 
+def isint(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
+
+
 class User:
     def __init__(self):
         self.answs = []

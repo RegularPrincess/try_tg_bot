@@ -6,10 +6,10 @@ import utils as u
 bot = telebot.TeleBot("645100799:AAHr08yGqhY8PxAjeSJSdPiUZ-D2MgcB3i8")
 USERS = {}
 ADMINS = []
-INADMINMENU = []
+INADMINMENU = {}
 Q = []
 Q.append(u.Question("Введите ваше имя, пожалуйста"))
-Q.append(u.Question("{}, выберите город доставки или введите свой вариант",
+Q.append(u.Question("Выберите город доставки или введите свой вариант",
                     ["Казань", "Бугульма", "Зеленодольск", "Альметьевск"]))
 Q.append(u.Question("Уточните улицу и дом"))
 Q.append(u.Question("Уточните время доставки", ["Утро", "День", "Вечер"]))
@@ -51,8 +51,8 @@ def handle_start_help(message):
 
 @bot.message_handler(commands=['admin'])
 def handle_start_help(message):
-    markup = u.get_keyboard(["Существующие вопросы", "Добавить вопрос"])
-    bot.send_message(message.from_user.id, "Меню администратора", markup)
+    markup = u.get_keyboard(["Существующие вопросы", "Добавить вопрос", "!Отмена"])
+    bot.send_message(message.from_user.id, "Меню администратора", reply_markup=markup)
 
 
 @bot.message_handler(content_types=["text"])
@@ -60,6 +60,32 @@ def handle_text(message):
     uid = message.from_user.id
     if message.from_user.id not in USERS:
         USERS[message.from_user.id] = u.User()
+
+    if message.text == "Существующие вопросы" and uid in ADMINS:
+        msg = "Текущие вопросы в боте: \n\n"
+        for q, i in Q:
+            msg += "(№ {}) " .format(i)
+            msg += '{} \n Ответы: {}\n\n'.format(q.text, ", ".join(q.answers))
+        msg += "Для удаления вопроса отправьте его номер."
+        INADMINMENU[uid] = "Существующие вопросы"
+        markup = u.get_keyboard(["Отмена"])
+        bot.send_message(uid, msg, reply_markup=markup)
+        return
+
+    if INADMINMENU[uid] == "Существующие вопросы":
+        if u.isint(message.text):
+            id = int(message.text)
+            Q.remove(Q[id])
+            msg = "Вопрос удален"
+            bot.send_message(uid, msg)
+            markup = u.get_keyboard(["/start"])
+            bot.send_message(message.from_user.id, "Нажмите на кнопку старт чтоб начать "
+                                                   "опрос или введите команду /start", reply_markup=markup)
+            INADMINMENU[uid] = ""
+            return
+        else:
+            msg = "Для удаления вопроса отправьте его номер."
+            bot.send_message(uid, msg)
 
     if message.text.lower() == "да" and USERS[message.from_user.id].question is None:
         if len(Q) > 0:
@@ -77,6 +103,7 @@ def handle_text(message):
         return
 
     if not USERS[uid].is_last_quest:
+        USERS[uid].answs.append(message.text)
         if USERS[uid].question is None:
             USERS[uid].question = Q[0]
             USERS[uid].q_index = 0
@@ -95,12 +122,12 @@ def handle_text(message):
         bot.send_message(message.from_user.id, "Спасибо, за пройденный опрос", reply_markup=markup)
         send_to_admins(USERS[message.from_user.id])
         USERS[message.from_user.id] = u.User()
-    #
-    # if message.text.lower() == "нет":
-    #     markup = u.get_keyboard(["/start"])
-    #     bot.send_message(message.from_user.id, "Нажмите на кнопку старт чтоб начать "
-    #                                            "опрос или введите команду /start", reply_markup=markup)
-    #     return
+
+    if message.text.lower() == "нет":
+        markup = u.get_keyboard(["/start"])
+        bot.send_message(message.from_user.id, "Нажмите на кнопку старт чтоб начать "
+                                               "опрос или введите команду /start", reply_markup=markup)
+        return
     #
     # elif USERS[message.from_user.id].name is None:
     #     USERS[message.from_user.id].name = message.text
