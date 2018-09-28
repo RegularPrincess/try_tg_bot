@@ -18,11 +18,16 @@ def is_email_valid(email):
         return False
 
 
+def del_uid_from_dict(uid, dict_):
+    if uid in dict_:
+        del dict_[uid]
+
+
 class User:
     def __init__(self):
-        name = None
-        city = None
-        detail = None
-        email = None
+        self.name = None
+        self.city = None
+        self.detail = None
+        self.email = None
 
 

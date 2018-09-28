@@ -64,9 +64,11 @@ def handle_text(message):
             USERS[message.from_user.id].email = "Пропущено"
         elif u.is_email_valid(message.text):
             USERS[message.from_user.id].email = message.text
-            markup = types.ReplyKeyboardRemove(selective=False)
+            markup = u.get_keyboard(["/start"])
+            # markup = types.ReplyKeyboardRemove(selective=False)
             bot.send_message(message.from_user.id, "Спасибо, за пройденный опрос", reply_markup=markup)
             send_to_admins(USERS[message.from_user.id])
+            u.del_uid_from_dict(message.from_user.id, USERS)
         else:
             bot.send_message(message.from_user.id, "❗ Адрес электронной почты не распознан. "
                                                    "Введите, пожалуйста, в формате example@domain.ru")
