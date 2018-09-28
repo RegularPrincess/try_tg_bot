@@ -50,8 +50,11 @@ def handle_start_help(message):
 
 @bot.message_handler(commands=['admin'])
 def handle_start_help(message):
-    markup = u.get_keyboard(["Существующие вопросы", "Добавить вопрос", "!Отмена"])
-    bot.send_message(message.from_user.id, "Меню администратора", reply_markup=markup)
+    if message.from_user.id in ADMINS:
+        markup = u.get_keyboard(["Существующие вопросы", "Добавить вопрос", "!Отмена"])
+        bot.send_message(message.from_user.id, "Меню администратора", reply_markup=markup)
+    else:
+        bot.send_message(message.from_user.id, "Вы не администратор")
 
 
 @bot.message_handler(content_types=["text"])
