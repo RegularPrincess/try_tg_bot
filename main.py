@@ -71,7 +71,7 @@ def handle_text(message):
             bot.send_message(uid, "В боте еще не заданы вопросы", reply_markup=markup)
         if len(Q) > 1:
             USERS[uid].question = Q[1]
-            USERS[uid].question.q_index = 1
+            USERS[uid].q_index = 1
         else:
             USERS[uid].is_last_quest = True
         return
@@ -79,9 +79,9 @@ def handle_text(message):
     if not USERS[uid].is_last_quest:
         markup = u.get_keyboard(USERS[uid].question.answers)
         bot.send_message(uid, USERS[uid].question.text, reply_markup=markup)
-        if len(Q) > USERS[uid].question.q_index + 1:
-            USERS[uid].question.q_index += 1
-            USERS[uid].question = Q[USERS[uid].question.q_index]
+        if len(Q) > USERS[uid].q_index + 1:
+            USERS[uid].q_index += 1
+            USERS[uid].question = Q[USERS[uid].q_index]
         else:
             USERS[uid].is_last_quest = True
         return
