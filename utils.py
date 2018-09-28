@@ -7,6 +7,8 @@ def get_keyboard(list_btns):
     for i in list_btns:
         itembtn = types.KeyboardButton(i)
         markup.add(itembtn)
+    if len(list_btns) < 1:
+        return types.ReplyKeyboardRemove(selective=False)
     return markup
 
 
@@ -25,9 +27,17 @@ def del_uid_from_dict(uid, dict_):
 
 class User:
     def __init__(self):
-        self.name = None
-        self.city = None
-        self.detail = None
-        self.email = None
+        self.answs = []
+        self.question = None
+        self.is_last_quest = False
+        self.q_index = 0
 
+
+class Question:
+    def __init__(self, text=None, answers=None):
+        self.text = text
+        if answers is None:
+            self.answers = []
+        else:
+            self.answers = answers
 
