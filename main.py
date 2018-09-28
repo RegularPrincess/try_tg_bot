@@ -68,7 +68,8 @@ def handle_text(message):
             # markup = types.ReplyKeyboardRemove(selective=False)
             bot.send_message(message.from_user.id, "Спасибо, за пройденный опрос", reply_markup=markup)
             send_to_admins(USERS[message.from_user.id])
-            u.del_uid_from_dict(message.from_user.id, USERS)
+            USERS[message.from_user.id] = u.User()
+            # u.del_uid_from_dict(message.from_user.id, USERS)
         else:
             bot.send_message(message.from_user.id, "❗ Адрес электронной почты не распознан. "
                                                    "Введите, пожалуйста, в формате example@domain.ru")
