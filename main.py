@@ -6,12 +6,12 @@ bot = telebot.TeleBot("645100799:AAHr08yGqhY8PxAjeSJSdPiUZ-D2MgcB3i8")
 USERS = {}
 ADMINS = []
 INADMINMENU = {}
-Q = []
-Q.append(u.Question("Введите ваше имя, пожалуйста"))
-Q.append(u.Question("Выберите город доставки или введите свой вариант",
-                    ["Казань", "Бугульма", "Зеленодольск", "Альметьевск"]))
-Q.append(u.Question("Уточните улицу и дом"))
-Q.append(u.Question("Уточните время доставки", ["Утро", "День", "Вечер"]))
+Questions = []
+Questions.append(u.Question("Введите ваше имя, пожалуйста"))
+Questions.append(u.Question("Выберите город доставки или введите свой вариант",
+                            ["Казань", "Бугульма", "Зеленодольск", "Альметьевск"]))
+Questions.append(u.Question("Уточните улицу и дом"))
+Questions.append(u.Question("Уточните время доставки", ["Утро", "День", "Вечер"]))
 
 
 def send_to_admins(user):
@@ -51,8 +51,11 @@ def handle_start_help(message):
 @bot.message_handler(commands=['admin'])
 def handle_start_help(message):
     if message.from_user.id in ADMINS:
-        markup = u.get_keyboard(["Существующие вопросы", "Добавить вопрос", "!Отмена"])
-        bot.send_message(message.from_user.id, "Меню администратора", reply_markup=markup)
+        markup = u.get_keyboard(["Существующие вопросы", "Добавить вопрос", "Отмена"])
+        bot.send_message(message.from_user.id, "Меню администратора \n"
+                                               "(Визуальное представление меню, "
+                                               "логика и способы взаимодействия c ботом являются "
+                                               "демо-вариантами и могут быть изменены)", reply_markup=markup)
     else:
         bot.send_message(message.from_user.id, "Вы не администратор")
 
@@ -63,10 +66,17 @@ def handle_text(message):
     if message.from_user.id not in USERS:
         USERS[message.from_user.id] = u.User()
 
+    if message.text == "Отмена" and uid in ADMINS:
+        markup = u.get_keyboard(["/start"])
+        bot.send_message(message.from_user.id, "Нажмите на кнопку старт чтоб начать "
+                                               "опрос или введите команду /start", reply_markup=markup)
+        if uid in INADMINMENU: INADMINMENU[uid] = ''
+        return
+
     if message.text == "Существующие вопросы" and uid in ADMINS:
         msg = "Текущие вопросы в боте: \n\n"
-        print(Q)
-        for i, q in Q:
+        print(Questions)
+        for i, q in Questions:
             print(q)
             msg += "(№ {}) ".format(i)
             msg += '{} \n Ответы: {}\n\n'.format(q.text, ", ".join(q.answers))
@@ -77,11 +87,23 @@ def handle_text(message):
         bot.send_message(uid, msg, reply_markup=markup)
         return
 
+    if message.text == "Добавить вопрос" and uid in ADMINS:
+        INADMINMENU[uid] = "Существующие вопросы"
+        msg = "Для добавления вопроса введите текст нового вопроса, " \
+              "затем в скобках варианты через запятую, если требуется. \n\n" \
+              "Пример: Введите ваш возраст (12 лет, 21 год, 45, более 50-ти)\n\n" \
+              "(строгие требования к написанию вопроса относятся лишь к существующему "\
+                "прототипу и в дальнейшем ввод вопросов будет упрощен)"
+        markup = u.get_keyboard(["Отмена"])
+        print(msg)
+        bot.send_message(uid, msg, reply_markup=markup)
+        return
+
     if uid in INADMINMENU:
         if INADMINMENU[uid] == "Существующие вопросы":
             if u.isint(message.text):
                 id = int(message.text)
-                Q.remove(Q[id])
+                Questions.remove(Questions[id])
                 msg = "Вопрос удален"
                 bot.send_message(uid, msg)
                 markup = u.get_keyboard(["/start"])
@@ -92,17 +114,31 @@ def handle_text(message):
             else:
                 msg = "Для удаления вопроса отправьте его номер."
                 bot.send_message(uid, msg)
+        if INADMINMENU[uid] == "Добавить вопрос":
+            try:
+                t = message.text
+                tq = t.split(' (')[0]
+                ta = t.split(' (')[1][:-1]
+                ta_arr = ta.split(', ')
+                Questions.append(u.Question(tq, ta_arr))
+                markup = u.get_keyboard(["/start"])
+                bot.send_message(uid, "Вопрос добавлен", reply_markup=markup)
+            except Exception:
+                bot.send_message(uid, "Пожалуйста следуйте требованиям при написании вопроса "
+                                      "(строгие требования относятся лишь к существующему "
+                                      "прототипу и в дальнейшем ввод вопросов будет упрощен)")
+        return
 
     if message.text.lower() == "да" and USERS[message.from_user.id].question is None:
-        if len(Q) > 0:
-            USERS[message.from_user.id].question = Q[0]
+        if len(Questions) > 0:
+            USERS[message.from_user.id].question = Questions[0]
             markup = u.get_keyboard(USERS[uid].question.answers)
             bot.send_message(uid, USERS[uid].question.text, reply_markup=markup)
         else:
             markup = u.get_keyboard([])
             bot.send_message(uid, "В боте еще не заданы вопросы", reply_markup=markup)
-        if len(Q) > 1:
-            USERS[uid].question = Q[1]
+        if len(Questions) > 1:
+            USERS[uid].question = Questions[1]
             USERS[uid].q_index = 1
         else:
             USERS[uid].is_last_quest = True
@@ -111,13 +147,13 @@ def handle_text(message):
     if not USERS[uid].is_last_quest:
         USERS[uid].answs.append(message.text)
         if USERS[uid].question is None:
-            USERS[uid].question = Q[0]
+            USERS[uid].question = Questions[0]
             USERS[uid].q_index = 0
         markup = u.get_keyboard(USERS[uid].question.answers)
         bot.send_message(uid, USERS[uid].question.text, reply_markup=markup)
-        if len(Q) > USERS[uid].q_index + 1:
+        if len(Questions) > USERS[uid].q_index + 1:
             USERS[uid].q_index += 1
-            USERS[uid].question = Q[USERS[uid].q_index]
+            USERS[uid].question = Questions[USERS[uid].q_index]
         else:
             USERS[uid].is_last_quest = True
         return
