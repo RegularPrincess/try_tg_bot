@@ -76,8 +76,8 @@ def handle_text(message):
     if message.text == "Существующие вопросы" and uid in ADMINS:
         msg = "Текущие вопросы в боте: \n\n"
         print(Questions)
-        for i, q in Questions:
-            print(q)
+        for i in range(0, len(Questions)):
+            q = Questions[i]
             msg += "(№ {}) ".format(i)
             msg += '{} \n Ответы: {}\n\n'.format(q.text, ", ".join(q.answers))
         msg += "Для удаления вопроса отправьте его номер."
@@ -88,7 +88,7 @@ def handle_text(message):
         return
 
     if message.text == "Добавить вопрос" and uid in ADMINS:
-        INADMINMENU[uid] = "Существующие вопросы"
+        INADMINMENU[uid] = "Добавить вопрос"
         msg = "Для добавления вопроса введите текст нового вопроса, " \
               "затем в скобках варианты через запятую, если требуется. \n\n" \
               "Пример: Введите ваш возраст (12 лет, 21 год, 45, более 50-ти)\n\n" \
