@@ -62,7 +62,7 @@ def handle_text(message):
 
     if message.text == "Существующие вопросы" and uid in ADMINS:
         msg = "Текущие вопросы в боте: \n\n"
-        for q, i in Q:
+        for i, q in Q:
             msg += "(№ {}) ".format(i)
             msg += '{} \n Ответы: {}\n\n'.format(q.text, ", ".join(q.answers))
         msg += "Для удаления вопроса отправьте его номер."
