@@ -2,7 +2,6 @@ import telebot
 import telebot.types as types
 import utils as u
 
-
 bot = telebot.TeleBot("645100799:AAHr08yGqhY8PxAjeSJSdPiUZ-D2MgcB3i8")
 USERS = {}
 ADMINS = []
@@ -64,7 +63,7 @@ def handle_text(message):
     if message.text == "Существующие вопросы" and uid in ADMINS:
         msg = "Текущие вопросы в боте: \n\n"
         for q, i in Q:
-            msg += "(№ {}) " .format(i)
+            msg += "(№ {}) ".format(i)
             msg += '{} \n Ответы: {}\n\n'.format(q.text, ", ".join(q.answers))
         msg += "Для удаления вопроса отправьте его номер."
         INADMINMENU[uid] = "Существующие вопросы"
@@ -72,20 +71,21 @@ def handle_text(message):
         bot.send_message(uid, msg, reply_markup=markup)
         return
 
-    if INADMINMENU[uid] == "Существующие вопросы":
-        if u.isint(message.text):
-            id = int(message.text)
-            Q.remove(Q[id])
-            msg = "Вопрос удален"
-            bot.send_message(uid, msg)
-            markup = u.get_keyboard(["/start"])
-            bot.send_message(message.from_user.id, "Нажмите на кнопку старт чтоб начать "
-                                                   "опрос или введите команду /start", reply_markup=markup)
-            INADMINMENU[uid] = ""
-            return
-        else:
-            msg = "Для удаления вопроса отправьте его номер."
-            bot.send_message(uid, msg)
+    if uid in INADMINMENU:
+        if INADMINMENU[uid] == "Существующие вопросы":
+            if u.isint(message.text):
+                id = int(message.text)
+                Q.remove(Q[id])
+                msg = "Вопрос удален"
+                bot.send_message(uid, msg)
+                markup = u.get_keyboard(["/start"])
+                bot.send_message(message.from_user.id, "Нажмите на кнопку старт чтоб начать "
+                                                       "опрос или введите команду /start", reply_markup=markup)
+                INADMINMENU[uid] = ""
+                return
+            else:
+                msg = "Для удаления вопроса отправьте его номер."
+                bot.send_message(uid, msg)
 
     if message.text.lower() == "да" and USERS[message.from_user.id].question is None:
         if len(Q) > 0:
@@ -128,42 +128,43 @@ def handle_text(message):
         bot.send_message(message.from_user.id, "Нажмите на кнопку старт чтоб начать "
                                                "опрос или введите команду /start", reply_markup=markup)
         return
-    #
-    # elif USERS[message.from_user.id].name is None:
-    #     USERS[message.from_user.id].name = message.text
-    #     markup = u.get_keyboard(["Казань", "Бугульма", "Зеленодольск", "Альметьевск"])
-    #     msg = "{}, выберите город доставки или введите свой вариант".format(USERS[message.from_user.id].name)
-    #     bot.send_message(message.from_user.id, msg, reply_markup=markup)
-    #
-    # elif USERS[message.from_user.id].city is None:
-    #     USERS[message.from_user.id].city = message.text
-    #     markup = types.ReplyKeyboardRemove(selective=False)
-    #     bot.send_message(message.from_user.id, "Уточните улицу и дом", reply_markup=markup)
-    #
-    # elif USERS[message.from_user.id].detail is None:
-    #     USERS[message.from_user.id].detail = message.text
-    #     markup = u.get_keyboard(["Пропустить"])
-    #     msg = "Сообщите, пожалуйста, ваш email или вы можете пропустить этот шаг"
-    #     bot.send_message(message.from_user.id, msg, reply_markup=markup)
-    #
-    # elif USERS[message.from_user.id].email is None:
-    #     if message.text == "Пропустить":
-    #         USERS[message.from_user.id].email = "Пропущено"
-    #     elif u.is_email_valid(message.text):
-    #         USERS[message.from_user.id].email = message.text
-    #
-    #         # u.del_uid_from_dict(message.from_user.id, USERS)
-    #     else:
-    #         bot.send_message(message.from_user.id, "❗ Адрес электронной почты не распознан. "
-    #                                                "Введите, пожалуйста, в формате example@domain.ru")
-    #     if USERS[message.from_user.id].email is not None:
-    #         markup = u.get_keyboard(["/start"])
-    #         # markup = types.ReplyKeyboardRemove(selective=False)
-    #         bot.send_message(message.from_user.id, "Спасибо, за пройденный опрос", reply_markup=markup)
-    #         send_to_admins(USERS[message.from_user.id])
-    #         USERS[message.from_user.id] = u.User()
-    # else:
-    #     pass
+        #
+        # elif USERS[message.from_user.id].name is None:
+        #     USERS[message.from_user.id].name = message.text
+        #     markup = u.get_keyboard(["Казань", "Бугульма", "Зеленодольск", "Альметьевск"])
+        #     msg = "{}, выберите город доставки или введите свой вариант".format(USERS[message.from_user.id].name)
+        #     bot.send_message(message.from_user.id, msg, reply_markup=markup)
+        #
+        # elif USERS[message.from_user.id].city is None:
+        #     USERS[message.from_user.id].city = message.text
+        #     markup = types.ReplyKeyboardRemove(selective=False)
+        #     bot.send_message(message.from_user.id, "Уточните улицу и дом", reply_markup=markup)
+        #
+        # elif USERS[message.from_user.id].detail is None:
+        #     USERS[message.from_user.id].detail = message.text
+        #     markup = u.get_keyboard(["Пропустить"])
+        #     msg = "Сообщите, пожалуйста, ваш email или вы можете пропустить этот шаг"
+        #     bot.send_message(message.from_user.id, msg, reply_markup=markup)
+        #
+        # elif USERS[message.from_user.id].email is None:
+        #     if message.text == "Пропустить":
+        #         USERS[message.from_user.id].email = "Пропущено"
+        #     elif u.is_email_valid(message.text):
+        #         USERS[message.from_user.id].email = message.text
+        #
+        #         # u.del_uid_from_dict(message.from_user.id, USERS)
+        #     else:
+        #         bot.send_message(message.from_user.id, "❗ Адрес электронной почты не распознан. "
+        #                                                "Введите, пожалуйста, в формате example@domain.ru")
+        #     if USERS[message.from_user.id].email is not None:
+        #         markup = u.get_keyboard(["/start"])
+        #         # markup = types.ReplyKeyboardRemove(selective=False)
+        #         bot.send_message(message.from_user.id, "Спасибо, за пройденный опрос", reply_markup=markup)
+        #         send_to_admins(USERS[message.from_user.id])
+        #         USERS[message.from_user.id] = u.User()
+        # else:
+        #     pass
+
 
 #
 # # Обработчик для документов и аудиофайлов
