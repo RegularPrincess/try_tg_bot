@@ -49,7 +49,8 @@ def handle_text(message):
 
     if message.text.lower() == "нет":
         markup = u.get_keyboard(["/start"])
-        bot.send_message(message.from_user.id, "", reply_markup=markup)
+        bot.send_message(message.from_user.id, "Нажмите на кнопку старт чтоб начать "
+                                               "опрос или введите команду /start", reply_markup=markup)
         return
 
     elif USERS[message.from_user.id].name is None:
