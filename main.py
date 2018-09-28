@@ -39,6 +39,9 @@ def handle_start_help(message):
 
 @bot.message_handler(content_types=["text"])
 def handle_text(message):
+    if message.from_user.id not in USERS:
+        USERS[message.from_user.id] = u.User()
+
     if message.text.lower() == "да":
         markup = types.ReplyKeyboardRemove(selective=False)
         bot.send_message(message.from_user.id, "Введите ваше имя, пожалуйста", reply_markup=markup)
