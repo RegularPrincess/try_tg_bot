@@ -18,7 +18,7 @@ def send_to_admins(user):
     for a in ADMINS:
         msg = "Пользователь прошел опрос. Его ответы: \n"
         for ans in user.answs:
-            msg += ans
+            msg += ans + ", "
         if len(user.answs) < 1:
             msg += "<Еще нет вопросов>"
         bot.send_message(a, msg)
