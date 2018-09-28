@@ -77,6 +77,9 @@ def handle_text(message):
         return
 
     if not USERS[uid].is_last_quest:
+        if USERS[uid].question is None:
+            USERS[uid].question = Q[0]
+            USERS[uid].q_index = 0
         markup = u.get_keyboard(USERS[uid].question.answers)
         bot.send_message(uid, USERS[uid].question.text, reply_markup=markup)
         if len(Q) > USERS[uid].q_index + 1:
