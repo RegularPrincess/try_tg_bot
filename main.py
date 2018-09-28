@@ -131,7 +131,6 @@ def handle_text(message):
                                       "прототипу и в дальнейшем ввод вопросов будет упрощен)")
                 return
 
-
     if message.text.lower() == "да":
         if len(Questions) > 0:
             USERS[message.from_user.id].question = Questions[0]
@@ -147,7 +146,7 @@ def handle_text(message):
             USERS[uid].is_last_quest = True
         return
 
-    if not USERS[uid].is_last_quest:
+    if not USERS[uid].is_last_quest and USERS[message.from_user.id].question is not None:
         USERS[uid].answs.append(message.text)
         # if USERS[uid].question is None:
         #     USERS[uid].question = Questions[0]
