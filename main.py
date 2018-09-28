@@ -130,7 +130,7 @@ def handle_text(message):
                                       "прототипу и в дальнейшем ввод вопросов будет упрощен)")
         return
 
-    if message.text.lower() == "да" and USERS[message.from_user.id].question is None:
+    if message.text.lower() == "да":
         if len(Questions) > 0:
             USERS[message.from_user.id].question = Questions[0]
             markup = u.get_keyboard(USERS[uid].question.answers)
