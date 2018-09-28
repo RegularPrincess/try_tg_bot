@@ -123,6 +123,7 @@ def handle_text(message):
                 Questions.append(u.Question(tq, ta_arr))
                 markup = u.get_keyboard(["/start"])
                 bot.send_message(uid, "Вопрос добавлен", reply_markup=markup)
+                INADMINMENU[uid] = ""
             except Exception:
                 bot.send_message(uid, "Пожалуйста следуйте требованиям при написании вопроса "
                                       "(строгие требования относятся лишь к существующему "
