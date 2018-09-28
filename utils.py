@@ -3,7 +3,7 @@ import telebot.types as types
 
 
 def get_keyboard(list_btns):
-    markup = types.ReplyKeyboardMarkup(row_width=len(list_btns) - 1)
+    markup = types.ReplyKeyboardMarkup(row_width=len(list_btns))
     for i in list_btns:
         itembtn = types.KeyboardButton(i)
         markup.add(itembtn)
