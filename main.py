@@ -45,6 +45,12 @@ def handle_text(message):
     if message.text.lower() == "да":
         markup = types.ReplyKeyboardRemove(selective=False)
         bot.send_message(message.from_user.id, "Введите ваше имя, пожалуйста", reply_markup=markup)
+        return
+
+    if message.text.lower() == "нет":
+        markup = u.get_keyboard(["/start"])
+        bot.send_message(message.from_user.id, "", reply_markup=markup)
+        return
 
     elif USERS[message.from_user.id].name is None:
         USERS[message.from_user.id].name = message.text
@@ -54,7 +60,8 @@ def handle_text(message):
 
     elif USERS[message.from_user.id].city is None:
         USERS[message.from_user.id].city = message.text
-        bot.send_message(message.from_user.id, "Уточните улицу и дом")
+        markup = types.ReplyKeyboardRemove(selective=False)
+        bot.send_message(message.from_user.id, "Уточните улицу и дом", reply_markup=markup)
 
     elif USERS[message.from_user.id].detail is None:
         USERS[message.from_user.id].detail = message.text
