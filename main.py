@@ -181,6 +181,7 @@ def handle_text(message):
         return
 
     if USERS[uid].is_last_quest:
+        USERS[uid].answs.append(message.text)
         # markup = u.get_keyboard(["/start"])
         markup = types.ReplyKeyboardRemove(selective=False)
         bot.send_message(message.from_user.id, "Спасибо, за пройденный опрос", reply_markup=u.get_keyboard([]))
