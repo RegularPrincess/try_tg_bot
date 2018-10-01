@@ -77,8 +77,9 @@ def handle_text(message):
                                                        "логика и способы взаимодействия c ботом являются "
                                                        "демо-вариантами и могут быть изменены)", reply_markup=markup)
                 return
+
             bot.send_message(message.from_user.id, "Чтобы начать "
-                                                   "опрос введите команду /start")
+                                                   "опрос введите команду /start", u.get_keyboard([]))
         return
 
     if message.text == "Существующие вопросы" and uid in ADMINS:
@@ -175,8 +176,8 @@ def handle_text(message):
 
     if USERS[uid].is_last_quest:
         # markup = u.get_keyboard(["/start"])
-        # markup = types.ReplyKeyboardRemove(selective=False)
-        bot.send_message(message.from_user.id, "Спасибо, за пройденный опрос")
+        markup = types.ReplyKeyboardRemove(selective=False)
+        bot.send_message(message.from_user.id, "Спасибо, за пройденный опрос", markup)
         send_to_admins(USERS[message.from_user.id])
         USERS[message.from_user.id] = u.User()
 
