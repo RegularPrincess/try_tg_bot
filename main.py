@@ -133,9 +133,15 @@ def handle_text(message):
             try:
                 t = message.text
                 tq = t.split(' (')[0]
-                ta = t.split(' (')[1][:-1]
-                ta_arr = ta.split(', ')
-                Questions.append(u.Question(tq, ta_arr))
+                if len(t.split(' (')):
+                    ta = t.split(' (')[1][:-1]
+                    ta_arr = ta.split(', ')
+                    if len(ta_arr[0]) > 0:
+                        Questions.append(u.Question(tq, ta_arr))
+                    else:
+                        Questions.append(u.Question(tq))
+                else:
+                    Questions.append(u.Question(tq))
                 markup = u.get_keyboard(["/start"])
                 bot.send_message(uid, "Вопрос добавлен", reply_markup=markup)
                 INADMINMENU[uid] = ""
