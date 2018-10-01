@@ -133,7 +133,7 @@ def handle_text(message):
             try:
                 t = message.text
                 tq = t.split(' (')[0]
-                if len(t.split(' (')):
+                if len(t.split(' (')) > 1:
                     ta = t.split(' (')[1][:-1]
                     ta_arr = ta.split(', ')
                     if len(ta_arr[0]) > 0:
