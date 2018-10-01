@@ -177,7 +177,7 @@ def handle_text(message):
     if USERS[uid].is_last_quest:
         # markup = u.get_keyboard(["/start"])
         markup = types.ReplyKeyboardRemove(selective=False)
-        bot.send_message(message.from_user.id, "Спасибо, за пройденный опрос", markup)
+        bot.send_message(message.from_user.id, "Спасибо, за пройденный опрос", u.get_keyboard([]))
         send_to_admins(USERS[message.from_user.id])
         USERS[message.from_user.id] = u.User()
 
