@@ -67,10 +67,18 @@ def handle_text(message):
         USERS[message.from_user.id] = u.User()
 
     if message.text == "Отмена" and uid in ADMINS:
-        markup = u.get_keyboard(["/start"])
-        bot.send_message(message.from_user.id, "Нажмите на кнопку старт чтоб начать "
-                                               "опрос или введите команду /start", reply_markup=markup)
-        if uid in INADMINMENU: INADMINMENU[uid] = ''
+
+        if uid in INADMINMENU:
+            if INADMINMENU[uid] != '':
+                INADMINMENU[uid] = ''
+                markup = u.get_keyboard(["Существующие вопросы", "Добавить вопрос", "Отмена"])
+                bot.send_message(message.from_user.id, "Меню администратора \n"
+                                                       "(Визуальное представление меню, "
+                                                       "логика и способы взаимодействия c ботом являются "
+                                                       "демо-вариантами и могут быть изменены)", reply_markup=markup)
+                return
+            bot.send_message(message.from_user.id, "Чтобы начать "
+                                                   "опрос введите команду /start")
         return
 
     if message.text == "Существующие вопросы" and uid in ADMINS:
@@ -106,10 +114,15 @@ def handle_text(message):
                 Questions.remove(Questions[id])
                 msg = "Вопрос удален"
                 bot.send_message(uid, msg)
-                markup = u.get_keyboard(["/start"])
-                bot.send_message(message.from_user.id, "Нажмите на кнопку старт чтоб начать "
-                                                       "опрос или введите команду /start", reply_markup=markup)
-                INADMINMENU[uid] = ""
+                # markup = u.get_keyboard(["/start"])
+                # bot.send_message(message.from_user.id, "Нажмите на кнопку старт чтоб начать "
+                #                                        "опрос или введите команду /start", reply_markup=markup)
+                markup = u.get_keyboard(["Существующие вопросы", "Добавить вопрос", "Отмена"])
+                bot.send_message(message.from_user.id, "Меню администратора \n"
+                                                       "(Визуальное представление меню, "
+                                                       "логика и способы взаимодействия c ботом являются "
+                                                       "демо-вариантами и могут быть изменены)", reply_markup=markup)
+                # INADMINMENU[uid] = ""
                 return
             else:
                 msg = "Для удаления вопроса отправьте его номер."
@@ -161,9 +174,9 @@ def handle_text(message):
         return
 
     if USERS[uid].is_last_quest:
-        markup = u.get_keyboard(["/start"])
+        # markup = u.get_keyboard(["/start"])
         # markup = types.ReplyKeyboardRemove(selective=False)
-        bot.send_message(message.from_user.id, "Спасибо, за пройденный опрос", reply_markup=markup)
+        bot.send_message(message.from_user.id, "Спасибо, за пройденный опрос")
         send_to_admins(USERS[message.from_user.id])
         USERS[message.from_user.id] = u.User()
 
